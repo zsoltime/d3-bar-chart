@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -9,6 +10,21 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 });
 const ExtractTextPluginConfig = new ExtractTextPlugin({
   filename: 'style.css',
+});
+const LoaderOptionsPluginConfig = new webpack.LoaderOptionsPlugin({
+  minimize: true,
+  debug: false,
+});
+const UglifyJSPluginConfig = new webpack.optimize.UglifyJsPlugin({
+  beautify: false,
+  mangle: {
+    screw_ie8: true,
+    keep_fnames: true,
+  },
+  compress: {
+    screw_ie8: true,
+  },
+  comments: false,
 });
 
 const config = {
@@ -31,7 +47,6 @@ const config = {
       test: /\.js?/,
       loaders: [
         'babel-loader',
-        'eslint-loader',
       ],
       exclude: /node_modules/,
     }, {
@@ -40,30 +55,18 @@ const config = {
         fallback: 'style-loader',
         use: [{
           loader: 'css-loader',
-          options: { sourceMap: true },
         }, {
           loader: 'sass-loader',
-          options: { sourceMap: true },
         }],
       }),
     }],
   },
   plugins: [
+    LoaderOptionsPluginConfig,
     HtmlWebpackPluginConfig,
     ExtractTextPluginConfig,
+    UglifyJSPluginConfig,
   ],
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    compress: true,
-    overlay: {
-      warnings: true,
-      errors: true,
-    },
-    port: 8080,
-    publicPath: 'dist',
-    watchContentBase: true,
-  },
-  devtool: 'cheap-module-eval-source-map',
 };
 
 module.exports = config;

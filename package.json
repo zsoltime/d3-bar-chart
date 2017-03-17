@@ -4,7 +4,8 @@
   "description": "D3.js bar chart for Free Code Camp",
   "main": "index.js",
   "scripts": {
-    "build": "webpack -p",
+    "build:dev": "webpack",
+    "build:dist": "webpack -p --config './webpack.prod.config.js'",
     "start": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
