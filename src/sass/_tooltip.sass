@@ -1,0 +1,19 @@
+.tooltip
+  box-shadow: 0 .5rem 1.25rem -.5rem $color-text
+  color: #444
+  min-width: 10em
+  opacity: 0
+  position: absolute
+  text-align: center
+  transition: all 75ms ease-in-out
+
+  p
+    margin: 0
+    padding: .5em
+
+    &:first-child
+      background: $color-text
+      color: #ddd
+
+    &:last-child
+      background: rgba(white, .5)
