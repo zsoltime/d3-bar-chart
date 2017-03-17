@@ -1,10 +1,14 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: './src/index.html',
   filename: 'index.html',
   inject: 'body',
+});
+const ExtractTextPluginConfig = new ExtractTextPlugin({
+  filename: 'style.css',
 });
 
 const config = {
@@ -32,19 +36,22 @@ const config = {
       exclude: /node_modules/,
     }, {
       test: /\.sass$/,
-      use: [{
-        loader: 'style-loader',
-        options: { sourceMap: true },
-      }, {
-        loader: 'css-loader',
-        options: { sourceMap: true },
-      }, {
-        loader: 'sass-loader',
-        options: { sourceMap: true },
-      }],
+      use: ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        use: [{
+          loader: 'css-loader',
+          options: { sourceMap: true },
+        }, {
+          loader: 'sass-loader',
+          options: { sourceMap: true },
+        }],
+      }),
     }],
   },
-  plugins: [HtmlWebpackPluginConfig],
+  plugins: [
+    HtmlWebpackPluginConfig,
+    ExtractTextPluginConfig,
+  ],
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
