@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
 
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: './src/index.html',
@@ -42,8 +43,17 @@ const config = {
           loader: 'css-loader',
           options: { sourceMap: true },
         }, {
+          loader: 'postcss-loader',
+          options: {
+            plugins: () => [autoprefixer],
+            sourceMap: true,
+          },
+        }, {
           loader: 'sass-loader',
-          options: { sourceMap: true },
+          options: {
+            outputStyle: 'expanded',
+            sourceMap: true,
+          },
         }],
       }),
     }],

@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const autoprefixer = require('autoprefixer');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -55,6 +56,9 @@ const config = {
         fallback: 'style-loader',
         use: [{
           loader: 'css-loader',
+        }, {
+          loader: 'postcss-loader',
+          options: { plugins: () => [autoprefixer] },
         }, {
           loader: 'sass-loader',
         }],
