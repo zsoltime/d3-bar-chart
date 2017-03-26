@@ -1,61 +1,103 @@
-import * as d3 from 'd3';
+import {
+  axisBottom,
+  axisLeft,
+  extent,
+  format,
+  json,
+  max,
+  mouse,
+  select,
+  scaleLinear,
+  scaleTime,
+  timeFormat
+} from 'd3';
 import 'styles';
 
 const url = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json';
 
 function visualize(data) {
   const margins = {
-    top: 20,
-    right: 20,
-    bottom: 40,
+    top: 5,
+    right: 10,
+    bottom: 80,
     left: 40,
   };
   const canvasWidth = 800;
-  const canvasHeight = 400;
+  const canvasHeight = 450;
   const height = canvasHeight - margins.top - margins.bottom;
   const width = canvasWidth - margins.left - margins.right;
 
   // create svg canvas
-  const svg = d3.select('#chart')
+  const svg = select('#chart')
     .append('svg')
-    .attr('class', 'chart')
-    .attr('width', canvasWidth)
-    .attr('height', canvasHeight)
-    .attr('viewBox', `0 0 ${canvasWidth} ${canvasHeight}`);
+      .attr('class', 'chart')
+      .attr('width', canvasWidth)
+      .attr('height', canvasHeight)
+      .attr('viewBox', `0 0 ${canvasWidth} ${canvasHeight}`);
 
   // add the tooltip
-  const tooltip = d3.select('#chart')
+  const tooltip = select('#chart')
     .append('div')
-    .attr('class', 'tooltip');
+      .attr('class', 'tooltip');
 
-  // add a linear gradient
-  const gradient = svg.append('defs')
+  // add linear gradients
+  const gradientGreen = svg.append('defs')
     .append('linearGradient')
       .attr('x1', 0)
       .attr('y1', 0)
       .attr('x2', 0)
       .attr('y2', '100%')
-      .attr('id', 'gradient');
+      .attr('id', 'gradient-green');
 
-  gradient.append('stop')
+  gradientGreen.append('stop')
     .attr('offset', '15%')
     .attr('stop-color', '#2e7d32');
-  gradient.append('stop')
+  gradientGreen.append('stop')
     .attr('offset', '90%')
     .attr('stop-color', '#4caf50');
 
+  const gradientRed = svg.append('defs')
+    .append('linearGradient')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', 0)
+      .attr('y2', '100%')
+      .attr('id', 'gradient-red');
+
+  gradientRed.append('stop')
+    .attr('offset', '15%')
+    .attr('stop-color', 'crimson');
+  gradientRed.append('stop')
+    .attr('offset', '90%')
+    .attr('stop-color', 'tomato');
+
+  const gradientBlue = svg.append('defs')
+  .append('linearGradient')
+    .attr('x1', 0)
+    .attr('y1', 0)
+    .attr('x2', 0)
+    .attr('y2', '100%')
+    .attr('id', 'gradient-blue');
+
+  gradientBlue.append('stop')
+  .attr('offset', '15%')
+  .attr('stop-color', 'steelblue');
+  gradientBlue.append('stop')
+  .attr('offset', '90%')
+  .attr('stop-color', 'lightseagreen');
+
   // set ranges and scale the range of data
-  const scaleX = d3.scaleTime()
-    .domain(d3.extent(data, d => new Date(d[0])))
+  const scaleX = scaleTime()
+    .domain(extent(data, d => new Date(d[0])))
     .rangeRound([0, width]);
-  const scaleY = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d[1])])
+  const scaleY = scaleLinear()
+    .domain([0, max(data, d => d[1])])
     .rangeRound([height, 0]);
 
   // define axes
-  const axisX = d3.axisBottom(scaleX)
+  const axisX = axisBottom(scaleX)
     .ticks(10);
-  const axisY = d3.axisLeft(scaleY)
+  const axisY = axisLeft(scaleY)
     .ticks(10);
 
   const chart = svg.append('g')
@@ -97,28 +139,69 @@ function visualize(data) {
       .attr('y', d => scaleY(d[1]))
       .attr('width', Math.ceil(width / data.length))
       .attr('height', d => height - scaleY(d[1]))
-      .on('mouseover', function onmouseover(d) {
-        const dateFormat = d3.timeFormat('%B %Y');
-        const currency = d3.format(',.7r');
-        const html = `
+      .on('mouseover', (d) => {
+        const dateFormat = timeFormat('%B %Y');
+        const currency = format(',.7r');
+        const content = `
           <p>${currency(d[1])} Billion</p>
-          <p>${dateFormat(new Date(d[0]))}</p>`;
+          <p>${dateFormat(new Date(d[0]))}</p>
+        `;
+        const tooltipX = `calc(${mouse(document.body)[0]}px - 50%)`;
+        const tooltipY = `calc(${mouse(document.body)[1]}px - 225%)`;
+
+        tooltip.html(content)
+          .style('transform', `translate(${tooltipX}, ${tooltipY})`);
 
         tooltip.transition()
           .duration(200)
           .style('opacity', 1);
-        tooltip.html(html)
-          .style('left', `${d3.mouse(this)[0]}px`)
-          .style('top', `${d3.mouse(this)[1] - 32}px`);
       })
       .on('mouseout', () => {
         tooltip.transition()
           .duration(100)
           .style('opacity', 0);
       });
+
+  // append gradient selectors
+  svg.append('circle')
+    .attr('class', 'selector')
+    .attr('cx', 0)
+    .attr('cy', 0)
+    .attr('r', 16)
+    .style('transform', 'translate(60px, 425px) rotate(-30deg)')
+    .attr('fill', 'url(#gradient-green)')
+    .on('click', () => {
+      svg.selectAll('.chart__bar')
+        .style('fill', 'url(#gradient-green)');
+    });
+
+  // todo: don't repeat them
+  svg.append('circle')
+    .attr('class', 'selector')
+    .attr('cx', 0)
+    .attr('cy', 0)
+    .attr('r', 16)
+    .style('transform', 'translate(110px, 425px) rotate(-30deg)')
+    .attr('fill', 'url(#gradient-blue)')
+    .on('click', () => {
+      svg.selectAll('.chart__bar')
+        .style('fill', 'url(#gradient-blue)');
+    });
+
+  svg.append('circle')
+    .attr('class', 'selector')
+    .attr('cx', 0)
+    .attr('cy', 0)
+    .attr('r', 16)
+    .style('transform', 'translate(160px, 425px) rotate(-30deg)')
+    .attr('fill', 'url(#gradient-red)')
+    .on('click', () => {
+      svg.selectAll('.chart__bar')
+        .style('fill', 'url(#gradient-red)');
+    });
 }
 
-d3.json(url, (err, { data }) => {
+json(url, (err, { data }) => {
   if (err) throw err;
   visualize(data);
 });

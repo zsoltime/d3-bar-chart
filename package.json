@@ -2,7 +2,7 @@
   "name": "bar-chart",
   "version": "0.1.0",
   "description": "D3.js bar chart for Free Code Camp",
-  "main": "index.js",
+  "main": "",
   "scripts": {
     "build:dev": "webpack",
     "build:dist": "webpack -p --config './webpack.prod.config.js'",
