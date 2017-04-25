@@ -1,4 +1,4 @@
-# D3.js Bar Chart
+# D3.js Bar Chart
 
 This is my D3 bar chart for Free Code Camp's [D3.js challenge](https://www.freecodecamp.com/challenges/visualize-data-with-a-bar-chart).
 
