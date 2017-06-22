@@ -29,7 +29,7 @@ const config = {
   },
   module: {
     rules: [{
-      test: /\.js?$/,
+      test: /\.js$/,
       loaders: [
         'babel-loader',
         'eslint-loader',

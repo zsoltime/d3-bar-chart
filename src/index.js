@@ -1,16 +1,10 @@
-import {
-  axisBottom,
-  axisLeft,
-  extent,
-  format,
-  json,
-  max,
-  mouse,
-  select,
-  scaleLinear,
-  scaleTime,
-  timeFormat
-} from 'd3';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { mouse, select } from 'd3-selection';
+import { scaleLinear, scaleTime } from 'd3-scale';
+import { extent, max } from 'd3-array';
+import { format } from 'd3-format';
+import { timeFormat } from 'd3-time-format';
+import { json } from 'd3-request';
 import 'styles';
 
 const url = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json';
