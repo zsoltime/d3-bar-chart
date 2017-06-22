@@ -5,6 +5,7 @@ import { extent, max } from 'd3-array';
 import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
 import { json } from 'd3-request';
+import 'd3-transition';
 import 'styles';
 
 const url = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json';
@@ -141,7 +142,7 @@ function visualize(data) {
           <p>${dateFormat(new Date(d[0]))}</p>
         `;
         const tooltipX = `calc(${mouse(document.body)[0]}px - 50%)`;
-        const tooltipY = `calc(${mouse(document.body)[1]}px - 225%)`;
+        const tooltipY = `calc(${mouse(document.body)[1]}px - 100%)`;
 
         tooltip.html(content)
           .style('transform', `translate(${tooltipX}, ${tooltipY})`);
