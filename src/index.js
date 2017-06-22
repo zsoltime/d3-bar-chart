@@ -5,6 +5,7 @@ import { extent, max } from 'd3-array';
 import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
 import { json } from 'd3-request';
+import { easeBack } from 'd3-ease';
 import 'd3-transition';
 import 'styles';
 
@@ -131,31 +132,39 @@ function visualize(data) {
     .append('rect')
       .attr('class', 'chart__bar')
       .attr('x', d => scaleX(new Date(d[0])))
-      .attr('y', d => scaleY(d[1]))
+      .attr('y', () => height)
       .attr('width', Math.ceil(width / data.length))
-      .attr('height', d => height - scaleY(d[1]))
-      .on('mouseover', (d) => {
-        const dateFormat = timeFormat('%B %Y');
-        const currency = format(',.7r');
-        const content = `
-          <p>${currency(d[1])} Billion</p>
-          <p>${dateFormat(new Date(d[0]))}</p>
-        `;
-        const tooltipX = `calc(${mouse(document.body)[0]}px - 50%)`;
-        const tooltipY = `calc(${mouse(document.body)[1]}px - 100%)`;
+      .attr('height', 0)
+      .transition()
+      .ease(easeBack)
+      .duration(1000)
+      .delay((d, i) => i * 2)
+      .attr('y', d => scaleY(d[1]))
+      .attr('height', d => height - scaleY(d[1]));
 
-        tooltip.html(content)
-          .style('transform', `translate(${tooltipX}, ${tooltipY})`);
+  chart.selectAll('rect')
+    .on('mouseover', (d) => {
+      const dateFormat = timeFormat('%B %Y');
+      const currency = format(',.7r');
+      const content = `
+        <p>${currency(d[1])} Billion</p>
+        <p>${dateFormat(new Date(d[0]))}</p>
+      `;
+      const tooltipX = `calc(${mouse(document.body)[0]}px - 50%)`;
+      const tooltipY = `calc(${mouse(document.body)[1]}px - 100%)`;
 
-        tooltip.transition()
-          .duration(200)
-          .style('opacity', 1);
-      })
-      .on('mouseout', () => {
-        tooltip.transition()
-          .duration(100)
-          .style('opacity', 0);
-      });
+      tooltip.html(content)
+        .style('transform', `translate(${tooltipX}, ${tooltipY})`);
+
+      tooltip.transition()
+        .duration(200)
+        .style('opacity', 1);
+    })
+    .on('mouseout', () => {
+      tooltip.transition()
+        .duration(100)
+        .style('opacity', 0);
+    });
 
   // append gradient selectors
   svg.append('circle')
