@@ -37,50 +37,51 @@ function visualize(data) {
       .attr('class', 'tooltip');
 
   // add linear gradients
-  const gradientGreen = svg.append('defs')
-    .append('linearGradient')
-      .attr('x1', 0)
-      .attr('y1', 0)
-      .attr('x2', 0)
-      .attr('y2', '100%')
-      .attr('id', 'gradient-green');
+  const gradients = [{
+    id: 'green',
+    from: '#2e7d32',
+    to: '#4caf50',
+  }, {
+    id: 'red',
+    from: 'crimson',
+    to: 'tomato',
+  }, {
+    id: 'blue',
+    from: 'steelblue',
+    to: 'lightseagreen',
+  }];
 
-  gradientGreen.append('stop')
-    .attr('offset', '15%')
-    .attr('stop-color', '#2e7d32');
-  gradientGreen.append('stop')
-    .attr('offset', '90%')
-    .attr('stop-color', '#4caf50');
+  gradients.forEach((gradient, i) => {
+    const g = svg.append('defs')
+      .append('linearGradient')
+        .attr('x1', 0)
+        .attr('y1', 0)
+        .attr('x2', 0)
+        .attr('y2', '100%')
+        .attr('id', `gradient-${gradient.id}`);
 
-  const gradientRed = svg.append('defs')
-    .append('linearGradient')
-      .attr('x1', 0)
-      .attr('y1', 0)
-      .attr('x2', 0)
-      .attr('y2', '100%')
-      .attr('id', 'gradient-red');
+    g.append('stop')
+      .attr('offset', '15%')
+      .attr('stop-color', gradient.from);
+    g.append('stop')
+      .attr('offset', '90%')
+      .attr('stop-color', gradient.to);
 
-  gradientRed.append('stop')
-    .attr('offset', '15%')
-    .attr('stop-color', 'crimson');
-  gradientRed.append('stop')
-    .attr('offset', '90%')
-    .attr('stop-color', 'tomato');
-
-  const gradientBlue = svg.append('defs')
-  .append('linearGradient')
-    .attr('x1', 0)
-    .attr('y1', 0)
-    .attr('x2', 0)
-    .attr('y2', '100%')
-    .attr('id', 'gradient-blue');
-
-  gradientBlue.append('stop')
-  .attr('offset', '15%')
-  .attr('stop-color', 'steelblue');
-  gradientBlue.append('stop')
-  .attr('offset', '90%')
-  .attr('stop-color', 'lightseagreen');
+    svg.append('circle')
+      .attr('class', 'selector')
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', 16)
+      .style(
+        'transform',
+        `translate(${60 + (i * 40)}px, ${canvasHeight - 24}px) rotate(-30deg)`
+      )
+      .attr('fill', `url(#gradient-${gradient.id})`)
+      .on('click', () => {
+        svg.selectAll('.chart__bar')
+          .style('fill', `url(#gradient-${gradient.id})`);
+      });
+  });
 
   // set ranges and scale the range of data
   const scaleX = scaleTime()
@@ -164,44 +165,6 @@ function visualize(data) {
       tooltip.transition()
         .duration(100)
         .style('opacity', 0);
-    });
-
-  // append gradient selectors
-  svg.append('circle')
-    .attr('class', 'selector')
-    .attr('cx', 0)
-    .attr('cy', 0)
-    .attr('r', 16)
-    .style('transform', 'translate(60px, 425px) rotate(-30deg)')
-    .attr('fill', 'url(#gradient-green)')
-    .on('click', () => {
-      svg.selectAll('.chart__bar')
-        .style('fill', 'url(#gradient-green)');
-    });
-
-  // todo: don't repeat them
-  svg.append('circle')
-    .attr('class', 'selector')
-    .attr('cx', 0)
-    .attr('cy', 0)
-    .attr('r', 16)
-    .style('transform', 'translate(110px, 425px) rotate(-30deg)')
-    .attr('fill', 'url(#gradient-blue)')
-    .on('click', () => {
-      svg.selectAll('.chart__bar')
-        .style('fill', 'url(#gradient-blue)');
-    });
-
-  svg.append('circle')
-    .attr('class', 'selector')
-    .attr('cx', 0)
-    .attr('cy', 0)
-    .attr('r', 16)
-    .style('transform', 'translate(160px, 425px) rotate(-30deg)')
-    .attr('fill', 'url(#gradient-red)')
-    .on('click', () => {
-      svg.selectAll('.chart__bar')
-        .style('fill', 'url(#gradient-red)');
     });
 }
 
